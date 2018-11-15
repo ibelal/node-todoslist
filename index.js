@@ -6,28 +6,26 @@ const mongoose = require('mongoose')
 const Todos = require('./model/todo')
 
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
+// set the base path for views
 app.use(express.static(__dirname + ('/public')))
 
+// set views enging ejs
 app.set('views', 'views')
 app.set('view engine', 'ejs')
 
-
+// mongodb configuration 
 mongoose.Promise = global.Promise;
-const mongoDB = 'mongodb://users:users123@ds149593.mlab.com:49593/users';
+const mongoDB = 'mongodb://<dbuser>:<dbpassword>@ds149593.mlab.com:49593/users'; // use your database user and password in here <dbuser>:<dbpassword>
 mongoose.connect(mongoDB, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
     if (err) return console.log(err)
 })
 
-
-
 var task = [];
 
-
-
+// get the todo list
 app.get('/', (req, res, next) => {
     Todos.find((err, todos) => {
         if (err) return next(err)
@@ -36,6 +34,7 @@ app.get('/', (req, res, next) => {
 
 })
 
+// add new todo task
 app.post('/addtask', function (req, res, next) {
     let todos = new Todos(req.body);
     todos.name = req.body.newtask
@@ -50,7 +49,7 @@ app.post('/addtask', function (req, res, next) {
     
 });
 
-
+// move task to completed
 app.post('/removetask', function (req, res, next) {
     const ids = req.body.check
 
@@ -65,6 +64,7 @@ app.post('/removetask', function (req, res, next) {
 
 });
 
+// re-add task to todo list
 app.post('/readdtask', (req, res, next) => {
     const ids = req.body.readd
     if (ids) {
