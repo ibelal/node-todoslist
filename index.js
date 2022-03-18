@@ -1,13 +1,15 @@
 const express = require('express')
+const dotenv = require("dotenv")
+
 const app = express()
-const bodyParser = require('body-parser')
-const port = process.env.PORT || 5000
+dotenv.config()
+
+const port = process.env.PORT || 8000
 const mongoose = require('mongoose')
 const Todos = require('./model/todo')
 
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // set the base path for views
 app.use(express.static(__dirname + ('/public')))
@@ -18,7 +20,7 @@ app.set('view engine', 'ejs')
 
 // mongodb configuration 
 mongoose.Promise = global.Promise;
-const mongoDB = 'mongodb://<dbuser>:<dbpassword>@ds149593.mlab.com:49593/users'; // use your database user and password in here <dbuser>:<dbpassword>
+const mongoDB = process.env.MONGO_URI; // use your mongo database uri
 mongoose.connect(mongoDB, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
     if (err) return console.log(err)
 })
@@ -38,15 +40,15 @@ app.get('/', (req, res, next) => {
 app.post('/addtask', function (req, res, next) {
     let todos = new Todos(req.body);
     todos.name = req.body.newtask
-    if(todos.name){
+    if (todos.name) {
         Todos.create(todos, (err, docs) => {
             if (err) return next(err)
             res.redirect("/");
         })
-    }else{
+    } else {
         res.redirect("/");
     }
-    
+
 });
 
 // move task to completed
@@ -56,10 +58,10 @@ app.post('/removetask', function (req, res, next) {
     if (ids) {
         Todos.updateMany({ _id: { $in: ids } }, { $set: { completed: 1 } }, (err, docs) => {
             if (err) return next(err)
-            res.redirect("/");            
+            res.redirect("/");
         })
-    }else{
-        res.redirect("/");            
+    } else {
+        res.redirect("/");
     }
 
 });
@@ -72,9 +74,32 @@ app.post('/readdtask', (req, res, next) => {
             if (err) return next(err)
             res.redirect('/');
         })
-    }else{
-        res.redirect("/");            
+    } else {
+        res.redirect("/");
     }
 })
 
-app.listen(port, () => console.log(`Server started at port: ${port}`))
+// delete task to todo list
+app.delete('/deletetask/:id', (req, res, next) => {
+    const id = req.params.id
+    if (id) {
+        Todos.findById(id, (err, docs) => {
+            if (err) {
+                return res.redirect(404, "/");
+            } else {
+                if (docs && docs._id) {
+                    Todos.deleteOne({ _id: id }, (err, docs) => {
+                        if (err) return next(err)
+                        return res.redirect(200, "/");
+                    })
+                } else {
+                    return res.redirect(404, "/");
+                }
+            }
+        })
+    } else {
+        return res.redirect(404, "/");
+    }
+})
+
+app.listen(port, () => console.log(`Server started at port: ${port}. http://localhost:5000/`))
