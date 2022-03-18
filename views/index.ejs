@@ -6,71 +6,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/scripts/bootstrap.min.css">
-    <title>Home</title>
+    <title>Node TODO Apps with Node.js & MongoDB</title>
 </head>
 
 <body>
     <div class="container">
         <h3>A Simple ToDo List App </h3>
-
         <form action="/addtask" method="post">
             <div class="form-group">
                 <label for="exampleInputnewtask1">New Task</label>
-                <input type="text" name="newtask" class="form-control" id="exampleInputnewtask1" placeholder="New Task">
+                <input type="text" name="newtask" class="form-control" id="exampleInputnewtask1"
+                    placeholder="Add a task" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Add</button>
-
-            <hr />
-            
-
-            <%  if(task){ var j= 0; var k=0; %>
+        </form>
+        <hr />
+        <% if(task){ var j=0; var k=0; %>
             <div class="row">
                 <div class="col-sm">
-                        <h3>Added Task</h3>
-                    <div class="form-group">
-                        <ul class="list-group list-group list-group-flush">
-                            <% for (var i = 0; i < task.length; i++) {
-                                if(task[i].completed == 0) {%>
-                            <li class="list-group-item"> <input class="form-check-input" type="checkbox" name="check" value=<%=task[i].id %> >
-                                <%= task[i].name %>
-                            </li>
-                            <% j++; }}%>
-                        </ul>
-                    </div>
-                    <button formaction="/removetask" type="submit" class="btn btn-success" <%=(j>0)? '':'disabled' %> >Complete</button>
+                    <h3>Added Task</h3>
+                    <form method="post">
+                        <div class="form-group">
+                            <ul class="list-group list-group list-group-flush">
+                                <% for (var i=0; i < task.length; i++) { if(task[i].completed==0) {%>
+                                    <li class="list-group-item"> <input class="form-check-input" type="checkbox"
+                                            name="check" value=<%=task[i].id %> >
+                                        <%= task[i].name %>
+                                    </li>
+                                    <% j++; }}%>
+                            </ul>
+                        </div>
+                        <button formaction="/removetask" type="submit" class="btn btn-success" <%=(j>0)? '':'disabled'
+                            %> >Complete</button>
+                    </form>
                 </div>
                 <div class="col-sm">
                     <h3>Completed Task</h3>
-
-                    <div class="form-group">
-                        <ul class="list-group list-group list-group-flush">
-                            <% var k=0; for (var i = 0; i < task.length; i++) {
-                               if(task[i].completed == 1) {%>
-                            <li class="list-group-item"> <input class="form-check-input" type="checkbox" name="readd" value=<%= task[i].id %> />
-                                <%= task[i].name %>
-                            </li>                   
-                            <% k++;} }%>
-                        </ul>
-                    </div>
-                    <button formaction="/readdtask" type="submit" class="btn btn-primary" <%=(k>0)? '':'disabled' %> >Re Add</button>
+                    <form method="post">
+                        <div class="form-group">
+                            <ul class="list-group list-group list-group-flush">
+                                <% var k=0; for (var i=0; i < task.length; i++) { if(task[i].completed==1) {%>
+                                    <li class="list-group-item">
+                                        <input class="form-check-input" type="checkbox" name="readd" value=<%=task[i].id
+                                            %> id=<%= task[i].id %> />
+                                            <label for=<%=task[i].id %> ><%= task[i].name %></label>
+                                            <span class="float-right">
+                                                <%=task[i].id %>
+                                                <button type="button"
+                                                    class="deleted-task btn btn-outline-danger btn-sm" value=<%=task[i].id %>>Delete</button>
+                                            </span>
+                                    </li>
+                                    <% k++;} }%>
+                            </ul>
+                        </div>
+                        <button formaction="/readdtask" type="submit" class="btn btn-primary" <%=(k>0)? '':'disabled'
+                            %>>Re Add</button>
+                    </form>
                 </div>
-                
-              </div>
-            
-           
-
+            </div>
             <hr />
-           
-            <%  }%>
-
-        </form>
-
+            <% }%>
     </div>
-
-    <script src="/scripts/jquery-3.3.1.slim.min.js"></script>
-    <script src="/scripts/popper.min.js"></script>
+    <script src="/scripts/jquery-3.1.1.min.js"></script>
     <script src="/scripts/bootstrap.min.js"></script>
+    <script src="/scripts/script.js"></script>
 </body>
 
 </html>
